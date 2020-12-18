@@ -53,7 +53,7 @@ new_mirror="https://alpha.us.repo.voidlinux.org/"
 
 rm -fr "$repos_cfg"
 mkdir -p "$repos_cfg"
-cp -fr '/usr/share/xbps.d/'*-repository-*.conf "$repos_cfg"
+cp -Rf '/usr/share/xbps.d/'*-repository-*.conf "$repos_cfg"
 
 for f in "$repos_cfg"/*-repository-*.conf; do
     sed -i'' "s|$current_mirror|$new_mirror|g" "$f"

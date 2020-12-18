@@ -52,7 +52,7 @@ git_dots_install() {
     git clone --depth '1' "$repo" "$clone_dir"
 
     # copy the .files to ~
-    cp -fr "$clone_dir/." "$HOME/"
+    cp -Rf "$clone_dir/." "$HOME/"
 
     # cleanup
     rm -fr "$clone_dir" "$HOME/.git/" "$HOME/LICENSE" "$HOME/readme.md"
