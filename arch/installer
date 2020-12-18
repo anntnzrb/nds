@@ -1,0 +1,131 @@
+#!/bin/sh
+
+# preamble
+
+# + append =shellcheck= byppases
+#   + this also creates the file itself & makes it executable
+
+
+# shellcheck source=/dev/null
+# do not account for sourced files
+# shellcheck disable=2046
+# cannot quote as we are comparing integers
+# shellcheck disable=2006
+# backtick notation is portable
+
+
+
+# source utilities
+
+
+full_path=`readlink -f "$0"`
+prnt1=`dirname "$full_path"`
+. "`dirname "$prnt1"`/lib/utils"
+
+# cleanup
+unset full_path prnt1
+
+
+
+# quit if not running with elevated priviledges
+
+
+exit_noperms
+
+# cores tweaking
+
+# use all cores for compilation
+
+
+sed -i'' "s/-j2/-j`nproc`/; s/^#MAKEFLAGS/MAKEFLAGS/" '/etc/makepkg.conf'
+
+# Pacman
+
+# + aesthetic tweaks
+
+
+# Pacman config file
+pacman_conf="/etc/pacman.conf"
+
+# enable colors
+grep -q '^Color' "$pacman_conf" || sed -i'' "s/^#Color$/Color/" "$pacman_conf"
+
+# enable pacman (literally)
+grep -q 'ILoveCandy' "$pacman_conf" ||
+    sed -i'' '/#VerbosePkgLists/a ILoveCandy' "$pacman_conf"
+
+# cleanup
+unset pacman_conf
+
+
+
+# + refresh pacman key-ring
+
+
+pacman --noconfirm -S 'archlinux-keyring'
+
+
+
+# + perform a full-system upgrade
+
+
+pacman --noconfirm -Suyy
+
+# dotfiles
+
+# installs dotfiles
+
+
+git_dots_install
+
+
+
+# + packages installation via package manager
+
+
+# delete blank lines & the ones starting with '#'
+sed -i'' '/^$/d ; /^#/d' 'pkgs.txt'
+
+# install
+pacman -S --needed - < pkgs.txt
+
+
+
+# + package installation via source
+
+
+# suckless' st (terminal emulator)
+git_src_install 'https://gitlab.com/anntnzrb/st.git'
+
+# suckless' dmenu
+git_src_install 'https://gitlab.com/anntnzrb/dmenu.git'
+
+# suckless' sent
+git_src_install 'https://gitlab.com/anntnzrb/sent.git'
+
+# suckless' dwm (window manager)
+git_src_install 'https://gitlab.com/anntnzrb/dwm.git'
+
+# dwmblocks (status bar for dwm)
+git_src_install 'https://gitlab.com/anntnzrb/dwmblocks.git'
+
+# change shell
+
+# + change default shell
+
+
+chsh_zsh
+
+# flat mouse acceleration for X11
+
+# + acceleration is enabled by default, disable it
+
+
+flat_accel_x11_patch
+
+
+
+# + perform a full-system upgrade
+
+
+xbps-install -Suy

@@ -1,0 +1,130 @@
+#!/bin/sh
+
+# utilities
+
+# helper functions meant to be used by the scripts who share pieces of code.
+
+# + append =shellcheck= byppases
+#   + this also creates the file itself & makes it executable
+
+
+# shellcheck source=/dev/null
+# do not account for sourced files
+# shellcheck disable=2046
+# cannot quote as we are comparing integers
+# shellcheck disable=2006
+# backtick notation is portable
+
+
+
+# prints a message to stderr & returns with non-successful code ‘1’
+
+
+err() { printf '%s\n' "$@" >&2 ; return 1; }
+
+
+
+# exits if the script is not ran with elevated priviledges
+
+
+exit_noperms() {
+    test `id -u` -ne 0 && {
+        tee <<! 2>&1
+This script needs to be ran with elevated priviledges
+
+Use 'sudo -E installer' to run with elevated priviledges & keep $USER 's
+environment variables
+!
+    } && exit 1
+}
+
+
+
+# =git clone='s a repository and install all files at =~=
+
+
+git_dots_install() {
+    # variables
+    repo="https://gitlab.com/anntnzrb/_nixrice.git"
+    clone_dir="$HOME/temp/_nixrice/"
+
+    # clone repo
+    git clone --depth '1' "$repo" "$clone_dir"
+
+    # copy the .files to ~
+    cp -fr "$clone_dir/." "$HOME/"
+
+    # cleanup
+    rm -fr "$clone_dir" "$HOME/.git/" "$HOME/LICENSE" "$HOME/readme.md"
+    unset clone_dir repo
+}
+
+
+
+# =git clone='s a repository and installs it using =make=
+
+
+git_src_install() {
+    # variables
+    prg_name=`basename "$1" .git`
+    clone_dir="$HOME/temp/$prg_name"
+    git clone --depth '1' "$1" "$clone_dir" || err 'Could not clone'
+    { make -C "$clone_dir" && make -C "$clone_dir" install; } || err 'Could not install'
+
+    # cleanup
+    rm -rf "$clone_dir"
+    unset clone_dir prg_name
+}
+
+# misc
+
+# + change default shell for /myself/, *NOT FOR ROOT*
+
+
+chsh_zsh() {
+    # variables
+    new_shell="zsh"
+
+    # ask for user
+    printf '\nenter the username whose shell will be changed\n'
+    read -r usser
+
+    # change shell
+    chsh -s "`command -v "$new_shell"`" "$usser" || err 'Could not change shell'
+
+    # update shell symlink (zsh)
+    ln -fs .profile .zprofile
+
+    # cleanup
+    unset new_shell usser
+}
+
+
+
+# + flat mouse acceleration for /X11/
+
+
+flat_accel_x11_patch() {
+    # Xorg configurations directory
+    xorg_conf_dir="/etc/X11/xorg.conf.d"
+
+    # create direcotry if it does not exist
+    test ! -d "$xorg_conf_dir" && mkdir -p "$xorg_conf_dir"
+
+    # actual patch
+    tee "$xorg_conf_dir/50-mouse-acceleration.conf" <<! >/dev/null
+Section "InputClass"
+    Identifier "My Mouse"
+    MatchIsPointer "yes"
+    Option "AccelerationProfile" "-1"
+    Option "AccelerationScheme" "none"
+    Option "AccelSpeed" "-1"
+EndSection
+!
+
+    # notify
+    printf 'flat mouse acceleration applied\n'
+
+    # cleanup
+    unset xorg_conf_dir
+}

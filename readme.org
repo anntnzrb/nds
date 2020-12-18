@@ -1,0 +1,648 @@
+#+TITLE: deployment scripts for *nix environments
+#+PROPERTY: header-args :comments org :results silent :mkdirp yes
+
+* table of contents                                                :TOC_2_gh:
+- [[#todos][TODOS]]
+- [[#preface][preface]]
+- [[#utilities][utilities]]
+  - [[#misc][misc]]
+- [[#arch-gnulinux][Arch GNU/Linux]]
+  - [[#preamble][preamble]]
+  - [[#installation][installation]]
+  - [[#tweaks][tweaks]]
+- [[#void-gnulinux][Void GNU/Linux]]
+  - [[#preamble-1][preamble]]
+  - [[#installation-1][installation]]
+  - [[#tweaks-1][tweaks]]
+
+* TODOS
+
++ refactor =read='s =-r=
+
++ refactor =basename=
+
+#+begin_quote
+Not all hosts have a working basename. You can use expr instead.
+#+end_quote
+
++ refactor =unset=
+
+#+begin_quote
+You cannot assume the support of unset.
+#+end_quote
+
+* preface
+
+this set of scripts allows deploying a variety of /UNIX-like/ (**nix*) environments
+with tiny personal configurations for my set-up to work as intended.
+
+since this is for a general usage, /POSIX/-compliance should be a must; something
+as simple as installing a base system should not require the use anything that
+isn't shipped already with the system.
+
+if it's not clear already, this file itself is the actual code of the various
+scripts, by using [[https://www.gnu.org/software/emacs/][GNU/Emacs']] [[https://orgmode.org/worg/org-contrib/babel/intro.html][Org-Mode's Babel feature]] this file can be /tangle/'d
+to produce the code (even for multiple files)
+
+* utilities
+
+helper functions meant to be used by the scripts who share pieces of code.
+
++ append =shellcheck= byppases
+  + this also creates the file itself & makes it executable
+
+#+begin_src sh :tangle "lib/utils" :shebang "#!/bin/sh\n"
+# shellcheck source=/dev/null
+# do not account for sourced files
+# shellcheck disable=2046
+# cannot quote as we are comparing integers
+# shellcheck disable=2006
+# backtick notation is portable
+#+end_src
+
+prints a message to stderr & returns with non-successful code ‘1’
+
+#+begin_src sh :tangle "lib/utils"
+err() { printf '%s\n' "$@" >&2 ; return 1; }
+#+end_src
+
+exits if the script is not ran with elevated priviledges
+
+#+begin_src sh :tangle "lib/utils"
+exit_noperms() {
+    test `id -u` -ne 0 && {
+        tee <<! 2>&1
+This script needs to be ran with elevated priviledges
+
+Use 'sudo -E installer' to run with elevated priviledges & keep $USER 's
+environment variables
+!
+    } && exit 1
+}
+#+end_src
+
+=git clone='s a repository and install all files at =~=
+
+#+begin_src sh :tangle "lib/utils"
+git_dots_install() {
+    # variables
+    repo="https://gitlab.com/anntnzrb/_nixrice.git"
+    clone_dir="$HOME/temp/_nixrice/"
+
+    # clone repo
+    git clone --depth '1' "$repo" "$clone_dir"
+
+    # copy the .files to ~
+    cp -fr "$clone_dir/." "$HOME/"
+
+    # cleanup
+    rm -fr "$clone_dir" "$HOME/.git/" "$HOME/LICENSE" "$HOME/readme.md"
+    unset clone_dir repo
+}
+#+end_src
+
+=git clone='s a repository and installs it using =make=
+
+#+begin_src sh :tangle "lib/utils"
+git_src_install() {
+    # variables
+    prg_name=`basename "$1" .git`
+    clone_dir="$HOME/temp/$prg_name"
+    git clone --depth '1' "$1" "$clone_dir" || err 'Could not clone'
+    { make -C "$clone_dir" && make -C "$clone_dir" install; } || err 'Could not install'
+
+    # cleanup
+    rm -rf "$clone_dir"
+    unset clone_dir prg_name
+}
+#+end_src
+
+** misc
+
++ change default shell for /myself/, *NOT FOR ROOT*
+
+#+begin_src sh :tangle "lib/utils"
+chsh_zsh() {
+    # variables
+    new_shell="zsh"
+
+    # ask for user
+    printf '\nenter the username whose shell will be changed\n'
+    read -r usser
+
+    # change shell
+    chsh -s "`command -v "$new_shell"`" "$usser" || err 'Could not change shell'
+
+    # update shell symlink (zsh)
+    ln -fs .profile .zprofile
+
+    # cleanup
+    unset new_shell usser
+}
+#+end_src
+
++ flat mouse acceleration for /X11/
+
+#+begin_src sh :tangle "lib/utils"
+flat_accel_x11_patch() {
+    # Xorg configurations directory
+    xorg_conf_dir="/etc/X11/xorg.conf.d"
+
+    # create direcotry if it does not exist
+    test ! -d "$xorg_conf_dir" && mkdir -p "$xorg_conf_dir"
+
+    # actual patch
+    tee "$xorg_conf_dir/50-mouse-acceleration.conf" <<! >/dev/null
+Section "InputClass"
+    Identifier "My Mouse"
+    MatchIsPointer "yes"
+    Option "AccelerationProfile" "-1"
+    Option "AccelerationScheme" "none"
+    Option "AccelSpeed" "-1"
+EndSection
+!
+
+    # notify
+    printf 'flat mouse acceleration applied\n'
+
+    # cleanup
+    unset xorg_conf_dir
+}
+#+end_src
+
+* Arch GNU/Linux
+
+installation instructions for [[https://archlinux.org/][Arch GNU/Linux]]
+
+from this point it is assumed you have:
+
++ set-up a base install
++ created a user
++ an active internet connection
+
+** preamble
+
++ append =shellcheck= byppases
+  + this also creates the file itself & makes it executable
+
+#+begin_src sh :tangle "arch/installer" :shebang "#!/bin/sh\n"
+# shellcheck source=/dev/null
+# do not account for sourced files
+# shellcheck disable=2046
+# cannot quote as we are comparing integers
+# shellcheck disable=2006
+# backtick notation is portable
+#+end_src
+
+source utilities
+
+#+begin_src sh :tangle "arch/installer"
+full_path=`readlink -f "$0"`
+prnt1=`dirname "$full_path"`
+. "`dirname "$prnt1"`/lib/utils"
+
+# cleanup
+unset full_path prnt1
+#+end_src
+
+quit if not running with elevated priviledges
+
+#+begin_src sh :tangle "arch/installer"
+exit_noperms
+#+end_src
+
+*** cores tweaking
+
+use all cores for compilation
+
+#+begin_src sh :tangle "arch/installer"
+sed -i'' "s/-j2/-j`nproc`/; s/^#MAKEFLAGS/MAKEFLAGS/" '/etc/makepkg.conf'
+#+end_src
+
+*** Pacman
+
++ aesthetic tweaks
+
+#+begin_src sh :tangle "arch/installer"
+# Pacman config file
+pacman_conf="/etc/pacman.conf"
+
+# enable colors
+grep -q '^Color' "$pacman_conf" || sed -i'' "s/^#Color$/Color/" "$pacman_conf"
+
+# enable pacman (literally)
+grep -q 'ILoveCandy' "$pacman_conf" ||
+    sed -i'' '/#VerbosePkgLists/a ILoveCandy' "$pacman_conf"
+
+# cleanup
+unset pacman_conf
+#+end_src
+
++ refresh pacman key-ring
+
+#+begin_src sh :tangle "arch/installer"
+pacman --noconfirm -S 'archlinux-keyring'
+#+end_src
+
++ perform a full-system upgrade
+
+#+begin_src sh :tangle "arch/installer"
+pacman --noconfirm -Suyy
+#+end_src
+
+** installation
+
+*** dotfiles
+
+installs dotfiles
+
+#+begin_src sh :tangle "arch/installer"
+git_dots_install
+#+end_src
+
+*** packages
+
++ list of packages for the package manager
+
+#+begin_src sh :tangle "arch/pkgs.txt"
+# ------------------------------------------------------------------------------
+# core
+# ------------------------------------------------------------------------------
+
+atool
+dunst
+feh
+gnome-keyring
+gnupg
+imagemagick
+libnotify
+libsecret
+maim
+mpc
+mpd
+mpv
+ncmpcpp
+openssh
+pass
+simple-mtpfs
+sxhkd
+tlp
+unclutter
+unzip
+xclip
+xdg-user-dirs
+xdotool
+xorg-server
+xorg-setxkbmap
+xorg-xbacklight
+xorg-xinit
+xorg-xkill
+xorg-xprop
+xorg-xrandr
+xorg-xrdb
+xorg-xset
+xorg-xsetroot
+zip
+zsh
+
+# ------------------------------------------------------------------------------
+# extra
+# ------------------------------------------------------------------------------
+
+alacritty
+cowsay
+emacs
+figlet
+fortune-mod
+gimp
+htop
+libreoffice-still
+libreoffice-still-es
+neofetch
+neovim
+newsboat
+pcmanfm
+picom
+qutebrowser
+redshift
+screenkey
+speedtest-cli
+toilet
+transmission-cli
+tree
+tremc
+youtube-dl
+zathura
+zathura-pdf-mupdf
+
+# ------------------------------------------------------------------------------
+# font
+# ------------------------------------------------------------------------------
+
+font-victor-mono
+fontconfig
+noto-fonts-emoji
+siji-git
+ttf-dejavu
+ttf-droid
+ttf-fira-code
+ttf-font-awesome
+ttf-hack
+xorg-fonts
+
+# ------------------------------------------------------------------------------
+# hardware specific
+# ------------------------------------------------------------------------------
+
+intel-ucode
+linux-firmware
+nvidia-lts
+pamixer
+pulseaudio
+pulseaudio-alsa
+pulsemixer
+#+end_src
+
++ packages installation via package manager
+
+#+begin_src sh :tangle "arch/installer"
+# delete blank lines & the ones starting with '#'
+sed -i'' '/^$/d ; /^#/d' 'pkgs.txt'
+
+# install
+pacman -S --needed - < pkgs.txt
+#+end_src
+
++ package installation via source
+
+#+begin_src sh :tangle "arch/installer"
+# suckless' st (terminal emulator)
+git_src_install 'https://gitlab.com/anntnzrb/st.git'
+
+# suckless' dmenu
+git_src_install 'https://gitlab.com/anntnzrb/dmenu.git'
+
+# suckless' sent
+git_src_install 'https://gitlab.com/anntnzrb/sent.git'
+
+# suckless' dwm (window manager)
+git_src_install 'https://gitlab.com/anntnzrb/dwm.git'
+
+# dwmblocks (status bar for dwm)
+git_src_install 'https://gitlab.com/anntnzrb/dwmblocks.git'
+#+end_src
+
+** tweaks
+
+*** change shell
+
++ change default shell
+
+#+begin_src sh :tangle "arch/installer"
+chsh_zsh
+#+end_src
+
+*** flat mouse acceleration for X11
+
++ acceleration is enabled by default, disable it
+
+#+begin_src sh :tangle "arch/installer"
+flat_accel_x11_patch
+#+end_src
+
+* Void GNU/Linux
+
+installation instructions for [[https://voidlinux.org/][Void GNU/Linux]]
+
+from this point it is assumed you have:
+
++ set-up a base install
++ created a user
++ an active internet connection
++ =git= is installed
+
+** preamble
+
++ append =shellcheck= byppases
+  + this also creates the file itself & makes it executable
+
+#+begin_src sh :tangle "void/installer" :shebang "#!/bin/sh\n"
+# shellcheck source=/dev/null
+# do not account for sourced files
+# shellcheck disable=2046
+# cannot quote as we are comparing integers
+# shellcheck disable=2006
+# backtick notation is portable
+#+end_src
+
+source utilities
+
+#+begin_src sh :tangle "void/installer"
+full_path=`readlink -f "$0"`
+prnt1=`dirname "$full_path"`
+. "`dirname "$prnt1"`/lib/utils"
+
+# cleanup
+unset full_path prnt1
+#+end_src
+
+quit if not running with elevated priviledges
+
+#+begin_src sh :tangle "void/installer"
+exit_noperms
+#+end_src
+
+*** xbps
+
++ add extra repositories
+
+#+begin_src sh :tangle "void/installer"
+xbps-install -Sy         \
+    'void-repo-multilib' \
+    'void-repo-nonfree'  \
+    'void-repo-multilib-nonfree'
+#+end_src
+
++ update mirrors
+
+#+begin_src sh :tangle "void/installer"
+repos_cfg="/etc/xbps.d"
+current_mirror="https://alpha.de.repo.voidlinux.org/"
+new_mirror="https://alpha.us.repo.voidlinux.org/"
+
+rm -fr "$repos_cfg"
+mkdir -p "$repos_cfg"
+cp -fr '/usr/share/xbps.d/'*-repository-*.conf "$repos_cfg"
+
+for f in "$repos_cfg"/*-repository-*.conf; do
+    sed -i'' "s|$current_mirror|$new_mirror|g" "$f"
+done
+
+# cleanup
+unset repos_cfg current_mirror new_mirror
+#+end_src
+
++ perform a full-system upgrade
+
+#+begin_src sh :tangle "arch/installer"
+xbps-install -Suy
+#+end_src
+
+** installation
+
+*** dotfiles
+
+installs dotfiles
+
+#+begin_src sh :tangle "void/installer"
+git_dots_install
+#+end_src
+
+*** packages
+
++ list of packages for the package manager
+
+#+begin_src sh :tangle "void/pkgs.txt"
+# ------------------------------------------------------------------------------
+# core
+# ------------------------------------------------------------------------------
+
+atool
+dunst
+feh
+gnome-keyring
+gnupg
+ImageMagick
+libnotify
+libsecret
+maim
+mpc
+mpd
+mpv
+ncmpcpp
+openssh
+pass
+simple-mtpfs
+sxhkd
+tlp
+unclutter
+unzip
+xclip
+xdg-user-dirs
+xdotool
+xorg-minimal
+setxkbmap
+xbacklight
+xinit
+xkill
+xprop
+xrandr
+xrdb
+xset
+xsetroot
+zip
+zsh
+
+# ------------------------------------------------------------------------------
+# extra
+# ------------------------------------------------------------------------------
+
+alacritty
+cowsay
+emacs-x11
+figlet
+fortune-mod
+gimp
+htop
+libreoffice-calc
+libreoffice-i18n-en-US
+libreoffice-i18n-es
+libreoffice-impress
+libreoffice-writer
+neofetch
+neovim
+newsboat
+pcmanfm
+picom
+qutebrowser
+redshift
+screenkey
+speedtest-cli
+toilet
+transmission
+tree
+tremc
+youtube-dl
+zathura
+zathura-pdf-mupdf
+
+# ------------------------------------------------------------------------------
+# font
+# ------------------------------------------------------------------------------
+
+dejavu-fonts-ttf
+font-Siji
+font-firacode
+font-hack-ttf
+font-libertine-ttf
+fontconfig-devel
+fonts-droid-ttf
+nerd-fonts
+xorg-fonts
+
+# ------------------------------------------------------------------------------
+# dependencies
+# ------------------------------------------------------------------------------
+
+base-devel
+libXft-devel
+libXinerama-devel
+harfbuzz-devel
+#+end_src
+
++ packages installation via package manager
+
+#+begin_src sh :tangle "void/installer"
+# delete blank lines & the ones starting with '#'
+sed -i'' '/^$/d ; /^#/d' 'pkgs.txt'
+
+# install
+xargs <pkgs.txt xbps-install -y
+#+end_src
+
++ package installation via source
+
+#+begin_src sh :tangle "void/installer"
+# suckless' st (terminal emulator)
+git_src_install 'https://gitlab.com/anntnzrb/st.git'
+
+# suckless' dmenu
+git_src_install 'https://gitlab.com/anntnzrb/dmenu.git'
+
+# suckless' sent
+git_src_install 'https://gitlab.com/anntnzrb/sent.git'
+
+# suckless' dwm (window manager)
+git_src_install 'https://gitlab.com/anntnzrb/dwm.git'
+
+# dwmblocks (status bar for dwm)
+git_src_install 'https://gitlab.com/anntnzrb/dwmblocks.git'
+#+end_src
+
+** tweaks
+
+*** change shell
+
++ change default shell
+
+#+begin_src sh :tangle "void/installer"
+chsh_zsh
+#+end_src
+
+*** flat mouse acceleration for X11
+
++ acceleration is enabled by default, disable it
+
+#+begin_src sh :tangle "void/installer"
+flat_accel_x11_patch
+#+end_src

@@ -1,0 +1,101 @@
+# packages
+
+# + list of packages for the package manager
+
+
+# ------------------------------------------------------------------------------
+# core
+# ------------------------------------------------------------------------------
+
+atool
+dunst
+feh
+gnome-keyring
+gnupg
+imagemagick
+libnotify
+libsecret
+maim
+mpc
+mpd
+mpv
+ncmpcpp
+openssh
+pass
+simple-mtpfs
+sxhkd
+tlp
+unclutter
+unzip
+xclip
+xdg-user-dirs
+xdotool
+xorg-server
+xorg-setxkbmap
+xorg-xbacklight
+xorg-xinit
+xorg-xkill
+xorg-xprop
+xorg-xrandr
+xorg-xrdb
+xorg-xset
+xorg-xsetroot
+zip
+zsh
+
+# ------------------------------------------------------------------------------
+# extra
+# ------------------------------------------------------------------------------
+
+alacritty
+cowsay
+emacs
+figlet
+fortune-mod
+gimp
+htop
+libreoffice-still
+libreoffice-still-es
+neofetch
+neovim
+newsboat
+pcmanfm
+picom
+qutebrowser
+redshift
+screenkey
+speedtest-cli
+toilet
+transmission-cli
+tree
+tremc
+youtube-dl
+zathura
+zathura-pdf-mupdf
+
+# ------------------------------------------------------------------------------
+# font
+# ------------------------------------------------------------------------------
+
+font-victor-mono
+fontconfig
+noto-fonts-emoji
+siji-git
+ttf-dejavu
+ttf-droid
+ttf-fira-code
+ttf-font-awesome
+ttf-hack
+xorg-fonts
+
+# ------------------------------------------------------------------------------
+# hardware specific
+# ------------------------------------------------------------------------------
+
+intel-ucode
+linux-firmware
+nvidia-lts
+pamixer
+pulseaudio
+pulseaudio-alsa
+pulsemixer

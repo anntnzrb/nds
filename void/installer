@@ -1,0 +1,115 @@
+#!/bin/sh
+
+# preamble
+
+# + append =shellcheck= byppases
+#   + this also creates the file itself & makes it executable
+
+
+# shellcheck source=/dev/null
+# do not account for sourced files
+# shellcheck disable=2046
+# cannot quote as we are comparing integers
+# shellcheck disable=2006
+# backtick notation is portable
+
+
+
+# source utilities
+
+
+full_path=`readlink -f "$0"`
+prnt1=`dirname "$full_path"`
+. "`dirname "$prnt1"`/lib/utils"
+
+# cleanup
+unset full_path prnt1
+
+
+
+# quit if not running with elevated priviledges
+
+
+exit_noperms
+
+# xbps
+
+# + add extra repositories
+
+
+xbps-install -Sy         \
+    'void-repo-multilib' \
+    'void-repo-nonfree'  \
+    'void-repo-multilib-nonfree'
+
+
+
+# + update mirrors
+
+
+repos_cfg="/etc/xbps.d"
+current_mirror="https://alpha.de.repo.voidlinux.org/"
+new_mirror="https://alpha.us.repo.voidlinux.org/"
+
+rm -fr "$repos_cfg"
+mkdir -p "$repos_cfg"
+cp -fr '/usr/share/xbps.d/'*-repository-*.conf "$repos_cfg"
+
+for f in "$repos_cfg"/*-repository-*.conf; do
+    sed -i'' "s|$current_mirror|$new_mirror|g" "$f"
+done
+
+# cleanup
+unset repos_cfg current_mirror new_mirror
+
+# dotfiles
+
+# installs dotfiles
+
+
+git_dots_install
+
+
+
+# + packages installation via package manager
+
+
+# delete blank lines & the ones starting with '#'
+sed -i'' '/^$/d ; /^#/d' 'pkgs.txt'
+
+# install
+xargs <pkgs.txt xbps-install -y
+
+
+
+# + package installation via source
+
+
+# suckless' st (terminal emulator)
+git_src_install 'https://gitlab.com/anntnzrb/st.git'
+
+# suckless' dmenu
+git_src_install 'https://gitlab.com/anntnzrb/dmenu.git'
+
+# suckless' sent
+git_src_install 'https://gitlab.com/anntnzrb/sent.git'
+
+# suckless' dwm (window manager)
+git_src_install 'https://gitlab.com/anntnzrb/dwm.git'
+
+# dwmblocks (status bar for dwm)
+git_src_install 'https://gitlab.com/anntnzrb/dwmblocks.git'
+
+# change shell
+
+# + change default shell
+
+
+chsh_zsh
+
+# flat mouse acceleration for X11
+
+# + acceleration is enabled by default, disable it
+
+
+flat_accel_x11_patch

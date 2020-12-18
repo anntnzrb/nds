@@ -1,0 +1,100 @@
+# packages
+
+# + list of packages for the package manager
+
+
+# ------------------------------------------------------------------------------
+# core
+# ------------------------------------------------------------------------------
+
+atool
+dunst
+feh
+gnome-keyring
+gnupg
+ImageMagick
+libnotify
+libsecret
+maim
+mpc
+mpd
+mpv
+ncmpcpp
+openssh
+pass
+simple-mtpfs
+sxhkd
+tlp
+unclutter
+unzip
+xclip
+xdg-user-dirs
+xdotool
+xorg-minimal
+setxkbmap
+xbacklight
+xinit
+xkill
+xprop
+xrandr
+xrdb
+xset
+xsetroot
+zip
+zsh
+
+# ------------------------------------------------------------------------------
+# extra
+# ------------------------------------------------------------------------------
+
+alacritty
+cowsay
+emacs-x11
+figlet
+fortune-mod
+gimp
+htop
+libreoffice-calc
+libreoffice-i18n-en-US
+libreoffice-i18n-es
+libreoffice-impress
+libreoffice-writer
+neofetch
+neovim
+newsboat
+pcmanfm
+picom
+qutebrowser
+redshift
+screenkey
+speedtest-cli
+toilet
+transmission
+tree
+tremc
+youtube-dl
+zathura
+zathura-pdf-mupdf
+
+# ------------------------------------------------------------------------------
+# font
+# ------------------------------------------------------------------------------
+
+dejavu-fonts-ttf
+font-Siji
+font-firacode
+font-hack-ttf
+font-libertine-ttf
+fontconfig-devel
+fonts-droid-ttf
+nerd-fonts
+xorg-fonts
+
+# ------------------------------------------------------------------------------
+# dependencies
+# ------------------------------------------------------------------------------
+
+base-devel
+libXft-devel
+libXinerama-devel
+harfbuzz-devel
