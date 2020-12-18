@@ -19,12 +19,6 @@
 
 + refactor =read='s =-r=
 
-+ refactor =basename=
-
-#+begin_quote
-Not all hosts have a working basename. You can use expr instead.
-#+end_quote
-
 + refactor =unset=
 
 #+begin_quote
@@ -86,7 +80,7 @@ environment variables
 #+begin_src sh :tangle "lib/utils"
 git_dots_install() {
     # variables
-    repo="https://gitlab.com/anntnzrb/_nixrice.git"
+    repo="https://gitlab.com/anntnzrb/_nixrice"
     clone_dir="$HOME/temp/_nixrice/"
 
     # clone repo
@@ -106,7 +100,7 @@ git_dots_install() {
 #+begin_src sh :tangle "lib/utils"
 git_src_install() {
     # variables
-    prg_name=`basename "$1" .git`
+    prg_name="${1##*/}"
     clone_dir="$HOME/temp/$prg_name"
     git clone --depth '1' "$1" "$clone_dir" || err 'Could not clone'
     { make -C "$clone_dir" && make -C "$clone_dir" install; } || err 'Could not install'
@@ -377,19 +371,19 @@ pacman -S --needed - < pkgs.txt
 
 #+begin_src sh :tangle "arch/installer"
 # suckless' st (terminal emulator)
-git_src_install 'https://gitlab.com/anntnzrb/st.git'
+git_src_install 'https://gitlab.com/anntnzrb/st'
 
 # suckless' dmenu
-git_src_install 'https://gitlab.com/anntnzrb/dmenu.git'
+git_src_install 'https://gitlab.com/anntnzrb/dmenu'
 
 # suckless' sent
-git_src_install 'https://gitlab.com/anntnzrb/sent.git'
+git_src_install 'https://gitlab.com/anntnzrb/sent'
 
 # suckless' dwm (window manager)
-git_src_install 'https://gitlab.com/anntnzrb/dwm.git'
+git_src_install 'https://gitlab.com/anntnzrb/dwm'
 
 # dwmblocks (status bar for dwm)
-git_src_install 'https://gitlab.com/anntnzrb/dwmblocks.git'
+git_src_install 'https://gitlab.com/anntnzrb/dwmblocks'
 #+end_src
 
 ** tweaks
@@ -614,19 +608,19 @@ xargs <pkgs.txt xbps-install -y
 
 #+begin_src sh :tangle "void/installer"
 # suckless' st (terminal emulator)
-git_src_install 'https://gitlab.com/anntnzrb/st.git'
+git_src_install 'https://gitlab.com/anntnzrb/st'
 
 # suckless' dmenu
-git_src_install 'https://gitlab.com/anntnzrb/dmenu.git'
+git_src_install 'https://gitlab.com/anntnzrb/dmenu'
 
 # suckless' sent
-git_src_install 'https://gitlab.com/anntnzrb/sent.git'
+git_src_install 'https://gitlab.com/anntnzrb/sent'
 
 # suckless' dwm (window manager)
-git_src_install 'https://gitlab.com/anntnzrb/dwm.git'
+git_src_install 'https://gitlab.com/anntnzrb/dwm'
 
 # dwmblocks (status bar for dwm)
-git_src_install 'https://gitlab.com/anntnzrb/dwmblocks.git'
+git_src_install 'https://gitlab.com/anntnzrb/dwmblocks'
 #+end_src
 
 ** tweaks

@@ -86,19 +86,19 @@ xargs <pkgs.txt xbps-install -y
 
 
 # suckless' st (terminal emulator)
-git_src_install 'https://gitlab.com/anntnzrb/st.git'
+git_src_install 'https://gitlab.com/anntnzrb/st'
 
 # suckless' dmenu
-git_src_install 'https://gitlab.com/anntnzrb/dmenu.git'
+git_src_install 'https://gitlab.com/anntnzrb/dmenu'
 
 # suckless' sent
-git_src_install 'https://gitlab.com/anntnzrb/sent.git'
+git_src_install 'https://gitlab.com/anntnzrb/sent'
 
 # suckless' dwm (window manager)
-git_src_install 'https://gitlab.com/anntnzrb/dwm.git'
+git_src_install 'https://gitlab.com/anntnzrb/dwm'
 
 # dwmblocks (status bar for dwm)
-git_src_install 'https://gitlab.com/anntnzrb/dwmblocks.git'
+git_src_install 'https://gitlab.com/anntnzrb/dwmblocks'
 
 # change shell
 
