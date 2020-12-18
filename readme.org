@@ -19,6 +19,12 @@
 
 + refactor =read='s =-r=
 
++ refactor =mkdir=
+
+#+begin_quote
+No mkdir option is portable to older systems.
+#+end_quote
+
 + refactor =unset=
 
 #+begin_quote
