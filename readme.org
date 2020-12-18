@@ -42,13 +42,13 @@ isn't shipped already with the system.
 
 if it's not clear already, this file itself is the actual code of the various
 scripts, by using [[https://www.gnu.org/software/emacs/][GNU/Emacs']] [[https://orgmode.org/worg/org-contrib/babel/intro.html][Org-Mode's Babel feature]] this file can be /tangle/'d
-to produce the code (even for multiple files)
+to produce the code (even for multiple files).
 
 * utilities
 
 helper functions meant to be used by the scripts who share pieces of code.
 
-+ append =shellcheck= byppases
++ append =shellcheck= bypasses
   + this also creates the file itself & makes it executable
 
 #+begin_src sh :tangle "lib/utils" :shebang "#!/bin/sh\n"
@@ -182,7 +182,7 @@ from this point it is assumed you have:
 
 ** preamble
 
-+ append =shellcheck= byppases
++ append =shellcheck= bypasses
   + this also creates the file itself & makes it executable
 
 #+begin_src sh :tangle "arch/installer" :shebang "#!/bin/sh\n"
@@ -423,7 +423,7 @@ from this point it is assumed you have:
 
 ** preamble
 
-+ append =shellcheck= byppases
++ append =shellcheck= bypasses
   + this also creates the file itself & makes it executable
 
 #+begin_src sh :tangle "void/installer" :shebang "#!/bin/sh\n"

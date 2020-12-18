@@ -2,7 +2,7 @@
 
 # preamble
 
-# + append =shellcheck= byppases
+# + append =shellcheck= bypasses
 #   + this also creates the file itself & makes it executable
 
 

@@ -4,7 +4,7 @@
 
 # helper functions meant to be used by the scripts who share pieces of code.
 
-# + append =shellcheck= byppases
+# + append =shellcheck= bypasses
 #   + this also creates the file itself & makes it executable
 
 
