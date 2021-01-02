@@ -33,16 +33,17 @@ You cannot assume the support of unset.
 
 * preface
 
-this set of scripts allows deploying a variety of /UNIX-like/ (**nix*) environments
-with tiny personal configurations for my set-up to work as intended.
+this set of scripts allows deploying a variety of /UNIX-like/ (**nix*)
+environments with tiny personal configurations for my set-up to work as
+intended.
 
-since this is for a general usage, /POSIX/-compliance should be a must; something
-as simple as installing a base system should not require the use anything that
-isn't shipped already with the system.
+since this is for a general usage, /POSIX/-compliance should be a must;
+something as simple as installing a base system should not require the use
+anything that isn't shipped already with the system.
 
 if it's not clear already, this file itself is the actual code of the various
-scripts, by using [[https://www.gnu.org/software/emacs/][GNU/Emacs']] [[https://orgmode.org/worg/org-contrib/babel/intro.html][Org-Mode's Babel feature]] this file can be /tangle/'d
-to produce the code (even for multiple files).
+scripts, by using [[https://www.gnu.org/software/emacs/][GNU/Emacs']] [[https://orgmode.org/worg/org-contrib/babel/intro.html][Org-Mode's Babel feature]] this file can be
+/tangle/'d to produce the code (even for multiple files).
 
 * utilities
 
@@ -109,7 +110,8 @@ git_src_install() {
     prg_name="${1##*/}"
     clone_dir="$HOME/temp/$prg_name"
     git clone --depth '1' "$1" "$clone_dir" || err 'Could not clone'
-    { make -C "$clone_dir" && make -C "$clone_dir" install; } || err 'Could not install'
+    { make -C "$clone_dir" && make -C "$clone_dir" install; } \
+        || err 'Could not install'
 
     # cleanup
     rm -rf "$clone_dir"
@@ -265,9 +267,9 @@ git_dots_install
 + list of packages for the package manager
 
 #+begin_src sh :tangle "arch/pkgs.txt"
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # core
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 atool
 dunst
@@ -305,9 +307,9 @@ xorg-xsetroot
 zip
 zsh
 
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # extra
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 alacritty
 cowsay
@@ -335,9 +337,9 @@ youtube-dl
 zathura
 zathura-pdf-mupdf
 
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # font
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 font-victor-mono
 fontconfig
@@ -350,9 +352,9 @@ ttf-font-awesome
 ttf-hack
 xorg-fonts
 
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # hardware specific
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 intel-ucode
 linux-firmware
@@ -503,9 +505,9 @@ git_dots_install
 + list of packages for the package manager
 
 #+begin_src sh :tangle "void/pkgs.txt"
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # core
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 atool
 dunst
@@ -543,9 +545,9 @@ xsetroot
 zip
 zsh
 
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # extra
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 alacritty
 cowsay
@@ -576,9 +578,9 @@ youtube-dl
 zathura
 zathura-pdf-mupdf
 
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # font
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 dejavu-fonts-ttf
 font-Siji
@@ -590,9 +592,9 @@ fonts-droid-ttf
 nerd-fonts
 xorg-fonts
 
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # dependencies
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 base-devel
 libXft-devel

@@ -69,7 +69,8 @@ git_src_install() {
     prg_name="${1##*/}"
     clone_dir="$HOME/temp/$prg_name"
     git clone --depth '1' "$1" "$clone_dir" || err 'Could not clone'
-    { make -C "$clone_dir" && make -C "$clone_dir" install; } || err 'Could not install'
+    { make -C "$clone_dir" && make -C "$clone_dir" install; } \
+        || err 'Could not install'
 
     # cleanup
     rm -rf "$clone_dir"
