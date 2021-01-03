@@ -55,7 +55,7 @@ git_dots_install() {
     cp -Rf "$clone_dir/." "$HOME/"
 
     # cleanup
-    rm -fr "$clone_dir" "$HOME/.git/" "$HOME/LICENSE" "$HOME/readme.md"
+    rm -Rf "$clone_dir" "$HOME/.git/" "$HOME/LICENSE" "$HOME/readme.md"
     unset clone_dir repo
 }
 
@@ -73,7 +73,7 @@ git_src_install() {
         || err 'Could not install'
 
     # cleanup
-    rm -rf "$clone_dir"
+    rm -Rf "$clone_dir"
     unset clone_dir prg_name
 }
 
