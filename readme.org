@@ -584,6 +584,7 @@ zathura-pdf-mupdf
 
 dejavu-fonts-ttf
 font-Siji
+font-fantasque-sans-ttf
 font-firacode
 font-hack-ttf
 font-libertine-ttf
@@ -597,10 +598,12 @@ xorg-fonts
 # -----------------------------------------------------------------------------
 
 linux-firmware
+lm_sensors
 intel-ucode
 nvidia
 apulse
 pamixer
+pulseaudio
 pulsemixer
 
 # -----------------------------------------------------------------------------
@@ -608,6 +611,7 @@ pulsemixer
 # -----------------------------------------------------------------------------
 
 base-devel
+curl
 libXft-devel
 libXinerama-devel
 harfbuzz-devel
