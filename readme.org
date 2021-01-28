@@ -486,7 +486,7 @@ unset repos_cfg current_mirror new_mirror
 
 + perform a full-system upgrade
 
-#+begin_src sh :tangle "arch/installer"
+#+begin_src sh :tangle "void/installer"
 xbps-install -Suy
 #+end_src
 

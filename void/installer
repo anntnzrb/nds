@@ -62,6 +62,13 @@ done
 # cleanup
 unset repos_cfg current_mirror new_mirror
 
+
+
+# + perform a full-system upgrade
+
+
+xbps-install -Suy
+
 # dotfiles
 
 # installs dotfiles

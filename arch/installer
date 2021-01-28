@@ -122,10 +122,3 @@ chsh_zsh
 
 
 flat_accel_x11_patch
-
-
-
-# + perform a full-system upgrade
-
-
-xbps-install -Suy
