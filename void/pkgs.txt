@@ -105,8 +105,19 @@ xorg-fonts
 
 linux-firmware
 lm_sensors
+mesa-dri
+xf86-input-synaptics
+
+# Intel
 intel-ucode
+intel-video-accel
+mesa-vulkan-intel
+xf86-video-intel
+
+# NVIDIA (needs non-free repo enabled)
 nvidia
+
+# audio
 apulse
 pamixer
 pulseaudio
