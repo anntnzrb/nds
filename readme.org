@@ -509,15 +509,17 @@ git_dots_install
 # core
 # -----------------------------------------------------------------------------
 
+ImageMagick
 atool
 dunst
 feh
 gnome-keyring
 gnupg
-ImageMagick
 libnotify
 libsecret
 maim
+man-pages-devel
+man-pages-posix
 mpc
 mpd
 mpv
@@ -525,25 +527,31 @@ ncmpcpp
 openssh
 pass
 simple-mtpfs
-sxhkd
 tlp
 unclutter
 unzip
+zip
+zsh
+
+
+# -----------------------------------------------------------------------------
+# Xorg (X11)
+# -----------------------------------------------------------------------------
+
+setxkbap
+sxhkd
+xbacklight
 xclip
 xdg-user-dirs
 xdotool
-xorg-minimal
-setxkbmap
-xbacklight
 xinit
 xkill
+xorg-minimal
 xprop
 xrandr
 xrdb
 xset
 xsetroot
-zip
-zsh
 
 # -----------------------------------------------------------------------------
 # extra
@@ -607,7 +615,7 @@ pulseaudio
 pulsemixer
 
 # -----------------------------------------------------------------------------
-# dependencies
+# base
 # -----------------------------------------------------------------------------
 
 base-devel
