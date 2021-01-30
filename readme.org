@@ -14,6 +14,7 @@
   - [[#preamble-1][preamble]]
   - [[#installation-1][installation]]
   - [[#tweaks-1][tweaks]]
+  - [[#services][services]]
 
 * TODOS
 
@@ -116,6 +117,18 @@ git_src_install() {
     # cleanup
     rm -Rf "$clone_dir"
     unset clone_dir prg_name
+}
+#+end_src
+
+
+enables a service depending on the init system
+
+#+begin_src sh :tangle "lib/utils"
+enable_service() {
+    case "$1" in
+    runit) ln -fs "/etc/sv/$2" '/var/service/' ;;
+    *) systemctl enable "$2" ;;
+    esac
 }
 #+end_src
 
@@ -670,4 +683,11 @@ chsh_zsh
 
 #+begin_src sh :tangle "void/installer"
 flat_accel_x11_patch
+#+end_src
+** services
+
+services to be enabled
+
+#+begin_src sh :tangle "void/installer"
+enable_service 'runit' 'tlp'
 #+end_src

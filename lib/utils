@@ -77,6 +77,19 @@ git_src_install() {
     unset clone_dir prg_name
 }
 
+
+
+
+# enables a service depending on the init system
+
+
+enable_service() {
+    case "$1" in
+    runit) ln -fs "/etc/sv/$2" '/var/service/' ;;
+    *) systemctl enable "$2" ;;
+    esac
+}
+
 # misc
 
 # + change default shell for /myself/, *NOT FOR ROOT*
