@@ -187,6 +187,8 @@ EndSection
 
 * Arch GNU/Linux
 
++ *TODO* :: Replace [[https://github.com/Jguer/yay][Yay]] with [[https://github.com/morganamilo/paru][Paru]]
+
 installation instructions for [[https://archlinux.org/][Arch GNU/Linux]]
 
 from this point it is assumed you have:
@@ -281,7 +283,7 @@ git_dots_install
 
 #+begin_src sh :tangle "arch/pkgs.txt"
 # -----------------------------------------------------------------------------
-# core
+# main
 # -----------------------------------------------------------------------------
 
 atool
@@ -301,9 +303,16 @@ openssh
 pass
 simple-mtpfs
 sxhkd
-tlp
 unclutter
+unrar
 unzip
+zip
+zsh
+
+# -----------------------------------------------------------------------------
+# Xorg (X11)
+# -----------------------------------------------------------------------------
+
 xclip
 xdg-user-dirs
 xdotool
@@ -317,8 +326,6 @@ xorg-xrandr
 xorg-xrdb
 xorg-xset
 xorg-xsetroot
-zip
-zsh
 
 # -----------------------------------------------------------------------------
 # extra
@@ -360,6 +367,7 @@ noto-fonts-emoji
 siji-git
 ttf-dejavu
 ttf-droid
+ttf-fantasque-sans-mono
 ttf-fira-code
 ttf-font-awesome
 ttf-hack
@@ -369,9 +377,16 @@ xorg-fonts
 # hardware specific
 # -----------------------------------------------------------------------------
 
+# CPU
 intel-ucode
-linux-firmware
+
+# GPU
 nvidia-lts
+
+linux-firmware
+tlp
+
+# audio
 pamixer
 pulseaudio
 pulseaudio-alsa
@@ -385,7 +400,7 @@ pulsemixer
 sed -i'' '/^$/d ; /^#/d' 'pkgs.txt'
 
 # install
-pacman -S --needed - < pkgs.txt
+yay -S --needed --noconfirm - < pkgs.txt
 #+end_src
 
 + package installation via source

@@ -87,7 +87,7 @@ git_dots_install
 sed -i'' '/^$/d ; /^#/d' 'pkgs.txt'
 
 # install
-pacman -S --needed - < pkgs.txt
+yay -S --needed --noconfirm - < pkgs.txt
 
 
 
