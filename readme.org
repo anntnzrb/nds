@@ -53,7 +53,7 @@ helper functions meant to be used by the scripts who share pieces of code.
 + append =shellcheck= bypasses
   + this also creates the file itself & makes it executable
 
-#+begin_src sh :tangle "lib/utils" :shebang "#!/bin/sh\n"
+#+begin_src shell :tangle "lib/utils" :shebang "#!/bin/sh\n"
 # shellcheck source=/dev/null
 # do not account for sourced files
 # shellcheck disable=2046
@@ -64,13 +64,13 @@ helper functions meant to be used by the scripts who share pieces of code.
 
 prints a message to stderr & returns with non-successful code ‘1’
 
-#+begin_src sh :tangle "lib/utils"
+#+begin_src shell :tangle "lib/utils"
 err() { printf '%s\n' "$@" >&2 ; return 1; }
 #+end_src
 
 exits if the script is not ran with elevated priviledges
 
-#+begin_src sh :tangle "lib/utils"
+#+begin_src shell :tangle "lib/utils"
 exit_noperms() {
     test `id -u` -ne 0 && {
         tee <<! 2>&1
@@ -85,7 +85,7 @@ environment variables
 
 =git clone='s a repository and install all files at =~=
 
-#+begin_src sh :tangle "lib/utils"
+#+begin_src shell :tangle "lib/utils"
 git_dots_install() {
     # variables
     repo="https://gitlab.com/anntnzrb/_nixrice"
@@ -105,7 +105,7 @@ git_dots_install() {
 
 =git clone='s a repository and installs it using =make=
 
-#+begin_src sh :tangle "lib/utils"
+#+begin_src shell :tangle "lib/utils"
 git_src_install() {
     # variables
     prg_name="${1##*/}"
@@ -123,7 +123,7 @@ git_src_install() {
 
 enables a service depending on the init system
 
-#+begin_src sh :tangle "lib/utils"
+#+begin_src shell :tangle "lib/utils"
 enable_service() {
     case "$1" in
     runit) ln -fs "/etc/sv/$2" '/var/service/' ;;
@@ -136,7 +136,7 @@ enable_service() {
 
 + change default shell for /myself/, *NOT FOR ROOT*
 
-#+begin_src sh :tangle "lib/utils"
+#+begin_src shell :tangle "lib/utils"
 chsh_zsh() {
     # variables
     new_shell="zsh"
@@ -158,7 +158,7 @@ chsh_zsh() {
 
 + flat mouse acceleration for /X11/
 
-#+begin_src sh :tangle "lib/utils"
+#+begin_src shell :tangle "lib/utils"
 flat_accel_x11_patch() {
     # Xorg configurations directory
     xorg_conf_dir="/etc/X11/xorg.conf.d"
@@ -202,7 +202,7 @@ from this point it is assumed you have:
 + append =shellcheck= bypasses
   + this also creates the file itself & makes it executable
 
-#+begin_src sh :tangle "arch/installer" :shebang "#!/bin/sh\n"
+#+begin_src shell :tangle "arch/installer" :shebang "#!/bin/sh\n"
 # shellcheck source=/dev/null
 # do not account for sourced files
 # shellcheck disable=2046
@@ -213,7 +213,7 @@ from this point it is assumed you have:
 
 source utilities
 
-#+begin_src sh :tangle "arch/installer"
+#+begin_src shell :tangle "arch/installer"
 full_path=`readlink -f "$0"`
 prnt1=`dirname "$full_path"`
 . "`dirname "$prnt1"`/lib/utils"
@@ -224,7 +224,7 @@ unset full_path prnt1
 
 quit if not running with elevated priviledges
 
-#+begin_src sh :tangle "arch/installer"
+#+begin_src shell :tangle "arch/installer"
 exit_noperms
 #+end_src
 
@@ -232,7 +232,7 @@ exit_noperms
 
 use all cores for compilation
 
-#+begin_src sh :tangle "arch/installer"
+#+begin_src shell :tangle "arch/installer"
 sed -i'' "s/-j2/-j`nproc`/; s/^#MAKEFLAGS/MAKEFLAGS/" '/etc/makepkg.conf'
 #+end_src
 
@@ -240,7 +240,7 @@ sed -i'' "s/-j2/-j`nproc`/; s/^#MAKEFLAGS/MAKEFLAGS/" '/etc/makepkg.conf'
 
 + aesthetic tweaks
 
-#+begin_src sh :tangle "arch/installer"
+#+begin_src shell :tangle "arch/installer"
 # Pacman config file
 pacman_conf="/etc/pacman.conf"
 
@@ -257,13 +257,13 @@ unset pacman_conf
 
 + refresh pacman key-ring
 
-#+begin_src sh :tangle "arch/installer"
+#+begin_src shell :tangle "arch/installer"
 pacman --noconfirm -S 'archlinux-keyring'
 #+end_src
 
 + perform a full-system upgrade
 
-#+begin_src sh :tangle "arch/installer"
+#+begin_src shell :tangle "arch/installer"
 pacman --noconfirm -Suyy
 #+end_src
 
@@ -273,7 +273,7 @@ pacman --noconfirm -Suyy
 
 installs dotfiles
 
-#+begin_src sh :tangle "arch/installer"
+#+begin_src shell :tangle "arch/installer"
 git_dots_install
 #+end_src
 
@@ -281,7 +281,7 @@ git_dots_install
 
 + list of packages for the package manager
 
-#+begin_src sh :tangle "arch/pkgs.txt"
+#+begin_src shell :tangle "arch/pkgs.txt"
 # -----------------------------------------------------------------------------
 # main
 # -----------------------------------------------------------------------------
@@ -397,7 +397,7 @@ pulsemixer
 
 + packages installation via package manager
 
-#+begin_src sh :tangle "arch/installer"
+#+begin_src shell :tangle "arch/installer"
 # delete blank lines & the ones starting with '#'
 sed -i'' '/^$/d ; /^#/d' 'pkgs.txt'
 
@@ -407,7 +407,7 @@ yay -S --needed --noconfirm - < pkgs.txt
 
 + package installation via source
 
-#+begin_src sh :tangle "arch/installer"
+#+begin_src shell :tangle "arch/installer"
 # suckless' st (terminal emulator)
 git_src_install 'https://gitlab.com/anntnzrb/st'
 
@@ -430,7 +430,7 @@ git_src_install 'https://gitlab.com/anntnzrb/dwmblocks'
 
 + change default shell
 
-#+begin_src sh :tangle "arch/installer"
+#+begin_src shell :tangle "arch/installer"
 chsh_zsh
 #+end_src
 
@@ -438,7 +438,7 @@ chsh_zsh
 
 + acceleration is enabled by default, disable it
 
-#+begin_src sh :tangle "arch/installer"
+#+begin_src shell :tangle "arch/installer"
 flat_accel_x11_patch
 #+end_src
 
@@ -461,7 +461,7 @@ it.
 + append =shellcheck= bypasses
   + this also creates the file itself & makes it executable
 
-#+begin_src sh :tangle "void/installer" :shebang "#!/bin/sh\n"
+#+begin_src shell :tangle "void/installer" :shebang "#!/bin/sh\n"
 # shellcheck source=/dev/null
 # do not account for sourced files
 # shellcheck disable=2046
@@ -472,7 +472,7 @@ it.
 
 source utilities
 
-#+begin_src sh :tangle "void/installer"
+#+begin_src shell :tangle "void/installer"
 full_path=`readlink -f "$0"`
 prnt1=`dirname "$full_path"`
 . "`dirname "$prnt1"`/lib/utils"
@@ -483,7 +483,7 @@ unset full_path prnt1
 
 quit if not running with elevated priviledges
 
-#+begin_src sh :tangle "void/installer"
+#+begin_src shell :tangle "void/installer"
 exit_noperms
 #+end_src
 
@@ -491,7 +491,7 @@ exit_noperms
 
 + add extra repositories
 
-#+begin_src sh :tangle "void/installer"
+#+begin_src shell :tangle "void/installer"
 xbps-install -Sy         \
     'void-repo-multilib' \
     'void-repo-nonfree'  \
@@ -500,7 +500,7 @@ xbps-install -Sy         \
 
 + update mirrors
 
-#+begin_src sh :tangle "void/installer"
+#+begin_src shell :tangle "void/installer"
 repos_cfg="/etc/xbps.d"
 current_mirror="https://alpha.de.repo.voidlinux.org/"
 new_mirror="https://alpha.us.repo.voidlinux.org/"
@@ -519,7 +519,7 @@ unset repos_cfg current_mirror new_mirror
 
 + perform a full-system upgrade
 
-#+begin_src sh :tangle "void/installer"
+#+begin_src shell :tangle "void/installer"
 xbps-install -Suy
 #+end_src
 
@@ -529,7 +529,7 @@ xbps-install -Suy
 
 installs dotfiles
 
-#+begin_src sh :tangle "void/installer"
+#+begin_src shell :tangle "void/installer"
 git_dots_install
 #+end_src
 
@@ -537,7 +537,7 @@ git_dots_install
 
 + list of packages for the package manager
 
-#+begin_src sh :tangle "void/pkgs.txt"
+#+begin_src shell :tangle "void/pkgs.txt"
 # -----------------------------------------------------------------------------
 # core
 # -----------------------------------------------------------------------------
@@ -671,7 +671,7 @@ harfbuzz-devel
 
 + packages installation via package manager
 
-#+begin_src sh :tangle "void/installer"
+#+begin_src shell :tangle "void/installer"
 # delete blank lines & the ones starting with '#'
 sed -i'' '/^$/d ; /^#/d' 'pkgs.txt'
 
@@ -681,7 +681,7 @@ xargs <pkgs.txt xbps-install -y
 
 + package installation via source
 
-#+begin_src sh :tangle "void/installer"
+#+begin_src shell :tangle "void/installer"
 # suckless' st (terminal emulator)
 git_src_install 'https://gitlab.com/anntnzrb/st'
 
@@ -704,7 +704,7 @@ git_src_install 'https://gitlab.com/anntnzrb/dwmblocks'
 
 + change default shell
 
-#+begin_src sh :tangle "void/installer"
+#+begin_src shell :tangle "void/installer"
 chsh_zsh
 #+end_src
 
@@ -712,13 +712,13 @@ chsh_zsh
 
 + acceleration is enabled by default, disable it
 
-#+begin_src sh :tangle "void/installer"
+#+begin_src shell :tangle "void/installer"
 flat_accel_x11_patch
 #+end_src
 ** services
 
 services to be enabled
 
-#+begin_src sh :tangle "void/installer"
+#+begin_src shell :tangle "void/installer"
 enable_service 'runit' 'tlp'
 #+end_src
