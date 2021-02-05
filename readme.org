@@ -295,6 +295,8 @@ imagemagick
 libnotify
 libsecret
 maim
+man-db
+man-pages
 mpc
 mpd
 mpv
